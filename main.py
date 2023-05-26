@@ -6,15 +6,22 @@ def show():
     print("You have the following Todos:")
     n = 1
     for i in todo_list:
+        i = i.replace('\n', '')
         print(f"{n}. {i}")
         n += 1
 
 
-file = open('todo.txt', 'r')
-saved_list = file.readlines()
-for item in saved_list:
-    todo_list.append(item.replace("\n", ""))
-file.close()
+def save_file():
+    with open('todo.txt', 'w') as txt:
+        txt.writelines(todo_list)
+
+
+with open('todo.txt', 'r') as file:
+    saved_list = file.readlines()
+    for item in saved_list:
+        todo_list.append(item)
+
+
 while True:
 
     user_choice = input(
@@ -23,15 +30,9 @@ while True:
 
     match user_choice:
         case "1":
-            new_todo = input("Enter a new Todo: ") + "\n"
-            file = open('todo.txt', 'r')
-            todo_List = file.readlines()
-            file.close()
-            todo_List.append(new_todo)
-            todo_list.append(new_todo.replace("\n", ""))
-            file = open('todo.txt', 'w')
-            file.writelines(todo_List)
-            file.close()
+            new_todo = input("Enter a new Todo: ") + '\n'
+            todo_list.append(new_todo)
+            save_file()
             print("Todo added successfully!")
 
         case "2":
@@ -51,8 +52,10 @@ while True:
 
                 match 1 <= num <= len(todo_list):
                     case True:
-                        edited_text = input(f"What would you like to change '{todo_list[num - 1]}' to?\n: ")
-                        todo_list[num - 1] = edited_text
+                        edit = todo_list[num - 1].replace('\n', '')
+                        edited_text = input(f"What would you like to change '{edit}' to?\n: ")
+                        todo_list[num - 1] = edited_text + '\n'
+                        save_file()
                         print("Todo updated successfully!")
                     case _:
                         print("Invalid Todo number. Please try again.")
@@ -72,12 +75,7 @@ while True:
                         match deleted_text:
                             case "y":
                                 todo_list.pop(num - 1)
-                                file = open('todo.txt', 'w')
-                                for dt in todo_list:
-                                    data = []
-                                    data.append(dt + '\n')
-                                    file.writelines(data)
-                                file.close()
+                                save_file()
 
                                 print("Todo deleted successfully!")
                             case _:
